@@ -1,6 +1,12 @@
 # SATURN BACKEND OSRM
 GPS Tracking Backend
 
+Documentation : doc/
+> Dev Repositories :
+
+- `https://github.com/wr4eng/saturn-osrm-backend`
+- `https://github.com/wr4eng/saturn-osrm-ui`
+
 ## Overview
 ```
 
@@ -29,10 +35,10 @@ GPS Tracking Backend
 - Real-time GPS tracking
 - Driver behaviour monitoring
 - Detailed and summary reports
-- Geofencing functionality
+- Geofencing functionality integration
 - Alarms, custom notifications, telegram Bot Command
 - Account and device management
-- Email and Telegram support
+- Email and Telegram support command
 - Event Forwading & Webhook
 - Self Hosted geocoder
 - Self Hosted osrm-backend (start v.1.1.0)
