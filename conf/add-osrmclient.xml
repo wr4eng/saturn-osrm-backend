@@ -1,0 +1,9 @@
+	<!-- OsrmClient routing API OSRM-BACKEND -->
+	<entry key='routing.type'>osrm</entry>
+	<entry key='routing.url'>https://sirius.domain:5000</entry>
+	<entry key='routing.profile'>driving</entry>
+	<entry key='routing.snap'>true</entry>
+	<entry key='routing.cache'>true</entry>
+	<entry key='routing.timeout'>30</entry>
+	<entry key='routing.cache.ttl'>3600000</entry>
+	<entry key='routing.retry'>3</entry>

@@ -1,0 +1,6 @@
+<!-- adjust for Max Speed (kmh)-->
+<entry key=‘routing.filter.maxSpeed’>120</entry>
+<!-- set to a stricter value if the device supports (m)-->
+<entry key=‘routing.filter.maxAccuracy’>40</entry>
+<!-- increase if noise is worse (m)-->
+<entry key=‘routing.filter.minDistance’>15</entry>
