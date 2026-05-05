@@ -39,7 +39,7 @@ coordinates caused by multipath, poor satellite geometry, or brief signal loss.
 When these raw coordinates are fed directly to `/route/v1`, OSRM faithfully routes
 through the drift points, producing loops and impossible paths on the map.
 
-**Example observed in production** (Bandung urban area):
+**Example observed in production** (My City - urban area):
 ```
 Raw GPS sequence:  main road → parking lot loop → back to main road
 /route/v1 output:  routes through the parking lot loop as if it were real travel
@@ -366,7 +366,7 @@ connection error).
 ## Test Results
 
 Tested against a production OSRM v5.26.0 instance with real device trace
-data (25 GPS positions, 4-hour urban trip, Bandung, Indonesia):
+data (25 GPS positions, 4-hour urban trip, My City, Indonesia):
 
 ```
 /match/v1 with real fixTime timestamps:
