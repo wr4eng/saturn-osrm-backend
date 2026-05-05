@@ -1,5 +1,4 @@
 // src/main/java/org/saturn/api/resource/ReportResource.java
-// OsrmClient 2026 WrA (wra.eng@gmail.com)
 
 package org.saturn.api.resource;
 
@@ -158,6 +157,7 @@ public class ReportResource extends SimpleObjectResource<Report> {
         return getRouteExcel(deviceIds, groupIds, from, to, type.equals("mail"));
     }
 
+    // OsrmClient 2026 WrA (wra.eng@gmail.com)
     // route-snap
     @Path("route-snap")
     @GET
