@@ -14,9 +14,9 @@ Documentation : doc/
 - Kotlin:        2.2.21
 - Groovy:        4.0.29
 - Ant:           Apache Ant(TM) version 1.10.15
-- Launcher JVM:  emurin-21.0.11+10 (build 21.0.11+10-LTS)
+- Launcher JVM:  Temurin-21.0.11+10 (build 21.0.11+10-LTS)
 - Daemon JVM:    /usr/lib/jvm/java-21-temurin-jdk/bin/java
-- OS:            6.19.14-300.fc44.x86_64
+- kernel:        6.19.14-300.fc44.x86_64
 
 ```
 ### JAVA & JAVAC
