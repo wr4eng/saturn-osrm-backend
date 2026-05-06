@@ -14,18 +14,17 @@ Documentation : doc/
 - Kotlin:        2.2.21
 - Groovy:        4.0.29
 - Ant:           Apache Ant(TM) version 1.10.15
-- Launcher JVM:  21.0.10 (Red Hat, Inc. 21.0.10+7)
-- Daemon JVM:    /usr/lib/jvm/java-21-openjdk
-- OS:            Linux 6.19.11-200.fc43.x86_64 amd64
+- Launcher JVM:  emurin-21.0.11+10 (build 21.0.11+10-LTS)
+- Daemon JVM:    /usr/lib/jvm/java-21-temurin-jdk/bin/java
+- OS:            6.19.14-300.fc44.x86_64
 
 ```
 ### JAVA & JAVAC
 
 ```
-
-- Openjdk 21.0.11 2026-04-21 LTS
-- OpenJDK Runtime Environment (Red_Hat-21.0.11.0.10-1) (build 21.0.11+10-LTS)
-- OpenJDK 64-Bit Server VM (Red_Hat-21.0.11.0.10-1) (build 21.0.11+10-LTS, mixed mode, sharing)
+- Openjdk version "21.0.11" 2026-04-21 LTS
+- OpenJDK Runtime Environment Temurin-21.0.11+10 (build 21.0.11+10-LTS)
+- OpenJDK 64-Bit Server VM Temurin-21.0.11+10 (build 21.0.11+10-LTS, mixed mode, sharing)
 - javac 21.0.11
 
 ```
