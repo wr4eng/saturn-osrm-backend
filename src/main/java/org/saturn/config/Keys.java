@@ -193,6 +193,21 @@ public final class Keys {
             List.of(KeyType.CONFIG));
 
     /**
+     * Speed unit for a protocol. Supported values include knots (default), kmh, mps, and mph.
+     */
+    public static final ConfigSuffix<String> PROTOCOL_SPEED = new StringConfigSuffix(
+            ".speed",
+            List.of(KeyType.CONFIG));
+
+    /**
+     * Report columns for Genx protocol.
+     */
+    public static final ConfigSuffix<String> PROTOCOL_REPORT_COLUMNS = new StringConfigSuffix(
+            ".reportColumns",
+            List.of(KeyType.CONFIG),
+            "1,2,3,4");
+
+    /**
      * Protocol type for Suntech.
      */
     public static final ConfigKey<Integer> PROTOCOL_TYPE = new IntegerConfigKey(
@@ -240,6 +255,22 @@ public final class Keys {
     public static final ConfigSuffix<String> PROTOCOL_FORMAT = new StringConfigSuffix(
             ".format",
             List.of(KeyType.CONFIG, KeyType.DEVICE));
+
+    /**
+     * Primary protocol format. Used by GlobalSat protocol.
+     */
+    public static final ConfigSuffix<String> PROTOCOL_FORMAT_0 = new StringConfigSuffix(
+            ".format0",
+            List.of(KeyType.CONFIG),
+            "TSPRXAB27GHKLMnaicz*U!");
+
+    /**
+     * Secondary protocol format. Used by GlobalSat protocol.
+     */
+    public static final ConfigSuffix<String> PROTOCOL_FORMAT_1 = new StringConfigSuffix(
+            ".format1",
+            List.of(KeyType.CONFIG),
+            "SARY*U!");
 
     /**
      * Protocol date format. Used by protocols that have configurable date format.
@@ -2239,5 +2270,86 @@ public final class Keys {
             "routing.match.minConfidence",
             List.of(KeyType.CONFIG),
             0.5);
+
+// =============================================================================
+// Keys.java — append after ROUTING_MATCH_MIN_CONFIDENCE
+// =============================================================================
+
+    // =============================================================================
+    // OsrmTripClient — /trip/v1 configuration keys
+    // =============================================================================
+
+    /**
+     * Enable OSRM trip planning using /trip/v1 (Traveling Salesman Problem solver).
+     * Uses brute force for <10 waypoints, greedy heuristic (farthest-insertion) for >=10.
+     * Input: last known position per device. Output: optimized visit order + route geometry.
+     * Requires routing.type=osrm.
+     * Default: false
+     */
+    public static final ConfigKey<Boolean> ROUTING_TRIP_ENABLED = new BooleanConfigKey(
+            "routing.trip.enabled",
+            List.of(KeyType.CONFIG),
+            false);
+
+    /**
+     * Return a round trip (route returns to the first location).
+     * When true, the driver returns to the starting point after visiting all stops.
+     * Default: true
+     */
+    public static final ConfigKey<Boolean> ROUTING_TRIP_ROUNDTRIP = new BooleanConfigKey(
+            "routing.trip.roundtrip",
+            List.of(KeyType.CONFIG),
+            true);
+
+    /**
+     * Fixed start point for the trip.
+     * "first" : trip always starts at the first input coordinate (e.g. device current position)
+     * "any"   : OSRM picks the optimal start point
+     * Default: "first"
+     */
+    public static final ConfigKey<String> ROUTING_TRIP_SOURCE = new StringConfigKey(
+            "routing.trip.source",
+            List.of(KeyType.CONFIG),
+            "first");
+
+    /**
+     * Fixed end point for the trip.
+     * "last" : trip always ends at the last input coordinate
+     * "any"  : OSRM picks the optimal end point
+     * Note: roundtrip=false + source=any + destination=any is NOT supported by OSRM.
+     * Default: "last"
+     */
+    public static final ConfigKey<String> ROUTING_TRIP_DESTINATION = new StringConfigKey(
+            "routing.trip.destination",
+            List.of(KeyType.CONFIG),
+            "last");
+
+    // =============================================================================
+    // OsrmTableClient — /table/v1 configuration keys
+    // =============================================================================
+
+    /**
+     * Enable OSRM duration/distance matrix computation using /table/v1.
+     * Sources: vehicle last positions (from /api/positions).
+     * Destinations: geofence centroids (from /api/geofences, parsed via GeofenceUtils).
+     * Requires routing.type=osrm.
+     * Default: false
+     */
+    public static final ConfigKey<Boolean> ROUTING_TABLE_ENABLED = new BooleanConfigKey(
+            "routing.table.enabled",
+            List.of(KeyType.CONFIG),
+            false);
+
+    /**
+     * Fallback speed in km/h for unreachable source/destination pairs.
+     * When a route cannot be found between two coordinates, OSRM estimates duration
+     * using straight-line (as-the-crow-flies) distance divided by this speed.
+     * Set to 0 to disable fallback (unreachable pairs will be null in the matrix).
+     * Default: 0 (disabled)
+     */
+    public static final ConfigKey<Double> ROUTING_TABLE_FALLBACK_SPEED = new DoubleConfigKey(
+            "routing.table.fallbackSpeed",
+            List.of(KeyType.CONFIG),
+            0.0);
 
 }
