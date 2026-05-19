@@ -86,8 +86,11 @@ import org.saturn.storage.MemoryStorage;
 import org.saturn.storage.Storage;
 import org.saturn.web.WebServer;
 import org.saturn.api.security.LoginService;
+
 import org.saturn.routing.OsrmClient;
 import org.saturn.routing.OsrmMatchClient;
+import org.saturn.routing.OsrmTripClient;
+import org.saturn.routing.OsrmTableClient;
 
 import jakarta.annotation.Nullable;
 import jakarta.inject.Singleton;
@@ -374,8 +377,11 @@ public class MainModule extends AbstractModule {
         velocityEngine.init(properties);
         return velocityEngine;
     }
+// =============================================================================
+// MainModule.java — additions
+// =============================================================================
 
-    // OsrmClient binding
+    // OsrmClient - binding
     @Singleton
     @Provides
     public static OsrmClient provideOsrmClient(Config config) {
@@ -397,6 +403,50 @@ public class MainModule extends AbstractModule {
                 return null; // OsrmClient not enabled
             }
             return new OsrmMatchClient(config, osrmClient);
+        }
+        return null;
+    }
+
+// =============================================================================
+// MainModule.java — additions
+// =============================================================================
+
+// 1. Add these imports alongside existing routing imports:
+//
+//    import org.saturn.routing.OsrmTripClient;
+//    import org.saturn.routing.OsrmTableClient;
+
+// 2. Append these two provider methods after provideOsrmMatchClient()
+
+    // -------------------------------------------------------------------------
+    // OsrmTripClient — optional, enabled via routing.trip.enabled=true
+    // Requires OsrmClient (routing.type=osrm); returns null if either is disabled.
+    // OsrmClient is passed as fallback for NoTrips edge cases.
+    // -------------------------------------------------------------------------
+    @Singleton
+    @Provides
+    public static OsrmTripClient provideOsrmTripClient(
+            Config config, @Nullable OsrmClient osrmClient) {
+        if ("osrm".equalsIgnoreCase(config.getString(Keys.ROUTING_TYPE))
+                && config.getBoolean(Keys.ROUTING_TRIP_ENABLED)) {
+            if (osrmClient == null) {
+                return null; // ROUTING_TYPE not osrm
+            }
+            return new OsrmTripClient(config, osrmClient);
+        }
+        return null;
+    }
+
+    // -------------------------------------------------------------------------
+    // OsrmTableClient — optional, enabled via routing.table.enabled=true
+    // Requires routing.type=osrm; no fallback client needed (matrix has no fallback).
+    // -------------------------------------------------------------------------
+    @Singleton
+    @Provides
+    public static OsrmTableClient provideOsrmTableClient(Config config) {
+        if ("osrm".equalsIgnoreCase(config.getString(Keys.ROUTING_TYPE))
+                && config.getBoolean(Keys.ROUTING_TABLE_ENABLED)) {
+            return new OsrmTableClient(config);
         }
         return null;
     }
