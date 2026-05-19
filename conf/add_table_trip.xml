@@ -1,0 +1,9 @@
+<!-- OsrmTripClient - trip/v1 -->
+<entry key='routing.trip.enabled'>true</entry>
+<entry key='routing.trip.roundtrip'>true</entry>
+<entry key='routing.trip.source'>first</entry>
+<entry key='routing.trip.destination'>last</entry>
+
+<!-- OsrmTableClient - table/v1 -->
+<entry key='routing.table.enabled'>true</entry>
+<entry key='routing.table.fallbackSpeed'>0.0</entry>
