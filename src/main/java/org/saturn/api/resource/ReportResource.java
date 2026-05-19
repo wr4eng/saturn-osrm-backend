@@ -17,6 +17,9 @@ import org.saturn.reports.GeofenceReportProvider;
 import org.saturn.reports.RouteReportProvider;
 import org.saturn.reports.StopsReportProvider;
 import org.saturn.reports.SummaryReportProvider;
+import org.saturn.reports.TripxReportProvider;
+import org.saturn.reports.TripxReportProvider.TableMatrixResult;
+import org.saturn.reports.TripxReportProvider.TripPlanResult;
 import org.saturn.reports.TripsReportProvider;
 import org.saturn.reports.common.ReportExecutor;
 import org.saturn.reports.common.ReportMailer;
@@ -74,6 +77,15 @@ public class ReportResource extends SimpleObjectResource<Report> {
 
     @Inject
     private DevicesReportProvider devicesReportProvider;
+    
+    // -------------------------------------------------------------------------
+    // OsrmClient 2025 WrA (wra.eng@gmail.com)
+    // TripxReportProvider (trip/v1 + table/v1)
+    // GET /api/reports/tripx-snap?deviceId=={id}
+    // GET /api/reports/table?deviceId=={id}
+    // -------------------------------------------------------------------------
+    @Inject
+    private TripxReportProvider tripxReportProvider;
 
     @Inject
     private ReportMailer reportMailer;
@@ -157,8 +169,11 @@ public class ReportResource extends SimpleObjectResource<Report> {
         return getRouteExcel(deviceIds, groupIds, from, to, type.equals("mail"));
     }
 
-    // OsrmClient 2026 WrA (wra.eng@gmail.com)
-    // route-snap
+    // -------------------------------------------------------------------------
+    // OsrmClient 2025 WrA (wra.eng@gmail.com)
+    // route-snap (match/v1) (route/v1)
+    // GET /api/reports/route-snap?deviceId=={id}
+    // -------------------------------------------------------------------------
     @Path("route-snap")
     @GET
     public Collection<Position> getRouteSnap(
@@ -169,6 +184,69 @@ public class ReportResource extends SimpleObjectResource<Report> {
         permissionsService.checkRestriction(getUserId(), UserRestrictions::getDisableReports);
         actionLogger.report(request, getUserId(), false, "route-snap", from, to, deviceIds, groupIds);
         return routeReportProvider.getObjectsSnapped(getUserId(), deviceIds, groupIds, from, to);
+    }
+
+    // -------------------------------------------------------------------------
+    // OsrmClient 2025 WrA (wra.eng@gmail.com)
+    // tripx-snap — MODE 1 (trip/v1) — optimized multi-stop route
+    // GET /api/reports/tripx-snap?deviceId=1&deviceId=2&deviceId=3
+    // No from/to — uses last known position from CacheManager per device
+    // Returns TripPlanResult (stops in visit order + geometry)
+    // -------------------------------------------------------------------------
+    @Path("tripx-snap")
+    @GET
+    public Response getTripSnap(
+            @QueryParam("deviceId") List<Long> deviceIds,
+            @QueryParam("groupId") List<Long> groupIds) throws StorageException {
+        permissionsService.checkRestriction(getUserId(), UserRestrictions::getDisableReports);
+        //actionLogger.report(request, getUserId(), false, "tripx-snap", null, null, deviceIds, groupIds);
+        Date now = new Date();
+        actionLogger.report(request, getUserId(), false, "tripx-snap", now, now, deviceIds, groupIds);
+        TripPlanResult result = tripxReportProvider.getObjectsTrip(getUserId(), deviceIds, groupIds);
+        if (result == null) {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                    .entity("{\"message\":\"Trip planning unavailable. "
+                            + "Check routing.trip.enabled and routing.type=osrm\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+        return Response.ok(result).build();
+    }
+
+    // -------------------------------------------------------------------------
+    // OsrmClient 2025 WrA (wra.eng@gmail.com)
+    // table — MODE 2 (table/v1) — ETA matrix vehicles vs geofences
+    // GET /api/reports/table?deviceId=1&deviceId=2&geofenceId=10&geofenceId=11
+    // No from/to — uses last known position from CacheManager per device
+    // Returns TableMatrixResult (ETA matrix + nearest vehicle per geofence)
+    // -------------------------------------------------------------------------
+    @Path("table")
+    @GET
+    public Response getTable(
+            @QueryParam("deviceId") List<Long> deviceIds,
+            @QueryParam("groupId") List<Long> groupIds,
+            @QueryParam("geofenceId") List<Long> geofenceIds) throws StorageException {
+        permissionsService.checkRestriction(getUserId(), UserRestrictions::getDisableReports);
+        //actionLogger.report(request, getUserId(), false, "table", null, null, deviceIds, groupIds);
+        Date now = new Date();
+        actionLogger.report(request, getUserId(), false, "table", now, now, deviceIds, groupIds);
+        if (geofenceIds == null || geofenceIds.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\":\"At least one geofenceId is required\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+
+        TableMatrixResult result = tripxReportProvider.getObjectsTable(
+                getUserId(), deviceIds, groupIds, geofenceIds);
+        if (result == null) {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                    .entity("{\"message\":\"Table computation unavailable. "
+                            + "Check routing.table.enabled and routing.type=osrm\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+        return Response.ok(result).build();
     }
 
     @Path("events")
