@@ -130,7 +130,7 @@ routing.table.fallback_speed default: 0.0 (disabled)
 <entry key='routing.trip.destination'>last</entry>
 
 <!-- OsrmTableClient - table/v1 -->
-<entry key='routing.table.enabled'>false</entry>
+<entry key='routing.table.enabled'>true</entry>
 <entry key='routing.table.fallbackSpeed'>0.0</entry>
 
 ```
